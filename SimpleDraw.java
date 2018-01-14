@@ -3,107 +3,87 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.JFrame;
 
-public class SimpleDraw extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
+public class SimpleDraw extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ChangeListener {
 
 	int lastx, lasty, newx, newy, eraser=0, rect=0, oval = 0;
 	DrawPanel panel;
-  JLabel label;
-  JLabel label2;
+  JLabel label, label2;
+	JSlider slider;
   Graphics g;
   JFileChooser fileChooser;
-  Component component;
-  JFrame f;
 
-  private void initButton() {
-    JPanel p = new JPanel();
+	private void addButton(JPanel p, JButton buttonItem, String iconitem, String actionName, ActionListener listener) {
 
-    ImageIcon icon1 = new ImageIcon("./004-edit.png");
-    JButton button1 = new JButton(icon1);
+    ImageIcon ButtonIcon = new ImageIcon(iconitem);
+		buttonItem = new JButton(ButtonIcon);
+    buttonItem.setActionCommand(actionName);
+    buttonItem.addActionListener(listener);
+		p.add(buttonItem);
 
-    ImageIcon icon2 = new ImageIcon("./002-eraser.png");
-    JButton button2 = new JButton(icon2);
-
-    ImageIcon icon3 = new ImageIcon("./008-paint-brush.png");
-    JButton button3 = new JButton(icon3);
-
-    ImageIcon icon4 = new ImageIcon("./001-bucket.png");
-    JButton button4 = new JButton(icon4);
-
-    ImageIcon icon5 = new ImageIcon("./003-select-1.png");
-    JButton button5 = new JButton(icon5);
-
-    ImageIcon icon6 = new ImageIcon("./005-ellipse.png");
-    JButton button6 = new JButton(icon6);
-
-    ImageIcon icon7 = new ImageIcon("./007-painting-palette.png");
-    JButton button7 = new JButton(icon7);
-
-    GridLayout layout = new GridLayout(4, 2);
-    layout.setHgap(10);
-    layout.setVgap(5);
-    p.setLayout(layout);
-
-    p.add(button1);
-    p.add(button2);
-    p.add(button3);
-    p.add(button4);
-    p.add(button5);
-    p.add(button6);
-    p.add(button7);
-
-    getContentPane().add(p, BorderLayout.CENTER);
-    this.setVisible(true);
   }
 
-  /*private void initButton() {
-    JButton button1 = new JButton("button1");
-    JButton button2 = new JButton("button2");
-    JButton button3 = new JButton("button3");
-    JButton button4 = new JButton("button4");
-    JButton button5 = new JButton("button5");
-    JButton button6 = new JButton("button6");
-    JButton button7 = new JButton("button7");
-    JButton button8 = new JButton("button8");
-    JButton button9 = new JButton("button9");
-    JButton button10 = new JButton("button10");
+	public void initButton() {
 
-    JPanel p = new JPanel();
-    GridLayout layout = new GridLayout(5, 2);
+		slider = new JSlider(1,100);
+		slider.setValue(1);
+		slider.setPaintTicks(true);
+		slider.addChangeListener(this);
+
+		JPanel p0 = new JPanel();
+
+		JPanel p = new JPanel();
+		JPanel p2 = new JPanel();
+
+		JButton button1 = new JButton();
+		JButton button2 = new JButton();
+		JButton button3 = new JButton();
+		JButton button4 = new JButton();
+		JButton button5 = new JButton();
+		JButton button6 = new JButton();
+		JButton button7 = new JButton();
+		JButton button8 = new JButton();
+
+		addButton(p, button1, "./004-edit.png", "pen", this);
+		addButton(p, button2, "./002-eraser.png", "Eraser", this);
+		addButton(p, button3, "./008-paint-brush.png", "brush", this);
+		addButton(p, button4, "./001-bucket.png", "bucket", this);
+		addButton(p, button5, "./003-select-1.png", "Rectangle", this);
+		addButton(p, button6, "./005-ellipse.png", "Oval", this);
+		addButton(p, button7, "./palette02.png", "Pallette", this);
+		addButton(p, button8, "./file02.png", "clear", this);
+
+		GridLayout layout = new GridLayout(4, 2);
     layout.setHgap(10);
-    layout.setVgap(5);
+    layout.setVgap(10);
     p.setLayout(layout);
 
-    button1.setPreferredSize(new Dimension(10, 10));
-    button2.setPreferredSize(new Dimension(10, 10));
-    button3.setPreferredSize(new Dimension(10, 10));
-    button4.setPreferredSize(new Dimension(10, 10));
-    button5.setPreferredSize(new Dimension(10, 10));
-    button6.setPreferredSize(new Dimension(10, 10));
-    button7.setPreferredSize(new Dimension(10, 10));
-    button8.setPreferredSize(new Dimension(10, 10));
-    button9.setPreferredSize(new Dimension(10, 10));
-    button10.setPreferredSize(new Dimension(10, 10));
+		p2.setLayout(new BorderLayout(0, 0));
 
-    p.add(button1);
-    p.add(button2);
-    p.add(button3);
-    p.add(button4);
-    p.add(button5);
-    p.add(button6);
-    p.add(button7);
-    p.add(button8);
-    p.add(button9);
-    p.add(button10);
+		p0.setPreferredSize(new Dimension(200, this.getHeight()-200));
 
+		label = new JLabel();
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setText("ブラシの大きさ：" + slider.getValue());
 
-    getContentPane().add(p, BorderLayout.CENTER);
-  }*/
+		p2.add(slider, BorderLayout.NORTH);
+    p2.add(label, BorderLayout.SOUTH);
+
+		p0.add(p, BorderLayout.NORTH);
+		p0.add(p2, BorderLayout.SOUTH);
+
+    Container container = getContentPane();
+    container.add(p0, BorderLayout.WEST);
+		this.setVisible(true);
+
+	}
 
   private void addMenuItem(JMenu targetMenu, String itemName, String actionName, ActionListener listener) {
 
@@ -146,26 +126,24 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     this.addMenuItem(menuWidth,"width20","width20",this);
     menuPen.add(menuWidth);
 
-    /*JMenu menuEraser = new JMenu("Eraser");
-    menuPen.add(menuEraser);
-
-    JMenu menuRect = new JMenu("Rectangle");
-    menuPen.add(menuRect);*/
-
     this.setJMenuBar(menubar);
 
-    label = new JLabel("");
+    label2 = new JLabel("");
     fileChooser = new JFileChooser();
     JPanel panel = new JPanel();
-    panel.add(label);
+    panel.add(label2);
     Container container = getContentPane();
     container.add(panel);
   }
 
   public void mouseClicked (MouseEvent arg0) {
-    Point point = arg0.getPoint();
-    label2.setText("x:" + point.x + ",y:" + point.y);
   }
+
+	public void stateChanged(ChangeEvent arg0) {
+		int s = slider.getValue();
+		label.setText("ブラシの大きさ：" + s);
+		panel.setPenWidth(s);
+	}
 
   public void mouseEntered (MouseEvent arg0) {
     lastx = arg0.getX();
@@ -196,16 +174,13 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 	public void mouseDragged(MouseEvent arg0) {
 		newx=arg0.getX();
 		newy=arg0.getY();
-    if (eraser == 1) {
-      /*panel.clearRect(lastx, lasty, w, h);*/
-    }
-    else if (rect == 1) {
+		if (rect == 1) {
       repaint();
     }
     else if (oval == 1) {
       repaint();
     }
-    else if (eraser != 1 || rect != 1 || oval != 1) {
+    else if (rect != 1 || oval != 1) {
       panel.drawLine(lastx,lasty,newx,newy);
       lastx=newx;
   		lasty=newy;
@@ -219,7 +194,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 	private void init() {
 		this.setTitle("Simple Draw");
 		/*this.setSize(300, 200);*/
-    this.setBounds(200, 200, 500, 300);
+    this.setBounds(100, 100, 1200, 900);
 		panel=new DrawPanel();
 		this.getContentPane().add(panel);
     panel.addMouseListener(this);
@@ -227,17 +202,9 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     panel.setPenColor(Color.black);
-
-    label2 = new JLabel("座標を表示");
+		panel.createBuffer(this.getWidth()-20, this.getHeight()-20);
 
     getContentPane().add(panel, BorderLayout.CENTER);
-    getContentPane().add(label2, BorderLayout.PAGE_END);
-	}
-
-  private void init2() {
-		this.setTitle("Tool Bar");
-    this.setBounds(800, 200, 150, 300);
-		this.setVisible(true);
 	}
 
   public void actionPerformed (ActionEvent arg0) {
@@ -276,17 +243,23 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
       eraser = 0;
       panel.setPenColor(Color.red);
     }
-    else if (command == "Choose color") {
+    else if (command == "Pallette") {
       eraser = 0;
       JColorChooser colorchooser = new JColorChooser();
       Color color = colorchooser.showDialog(this,"choose color", Color.blue);
       panel.setPenColor(color);
     }
     else if (command == "Eraser") {
+			panel.setPenColor(Color.white);
+			panel.setPenWidth(5);
       eraser = 1;
       rect = 0;
       oval = 0;
     }
+		else if (command == "pen") {
+			panel.setPenColor(Color.black);
+			panel.setPenWidth(1);
+		}
     else if (command == "Rectangle") {
       eraser = 0;
       rect = 1;
@@ -313,18 +286,9 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 	public static void main(String[] args) {
 		SimpleDraw frame=new SimpleDraw();
-
-    //コンストラクタに引数を指定
-		SimpleDraw f1 = new SimpleDraw();
-		SimpleDraw f2 = new SimpleDraw();
-		/*AwtFrameTest f3 = new AwtFrameTest("FrameTest3");*/
-
-    f1.initMenu();
-    f1.init();
-
-    f2.init2();
-    f2.initButton();
-
+		frame.initButton();
+		frame.initMenu();
+    frame.init();
 	}
 
 }

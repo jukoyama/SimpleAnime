@@ -22,7 +22,7 @@ public class DrawPanel extends JPanel {
 	Graphics2D bufferGraphics = null;
 	Dimension   size;
 
-	private void createBuffer(int width, int height) {
+	public void createBuffer(int width, int height) {
 		//バッファ用のImageとGraphicsを用意する
 		bufferImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
 		bufferGraphics = bufferImage.createGraphics(); //getGraphicsと似ているが、戻り値がGraohics2D
