@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 
 public class SimpleDraw extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ChangeListener {
 
-	int lastx, lasty, newx, newy, eraser=0, rect=0, oval = 0;
+	int lastx, lasty, newx, newy, eraser=0, rect=0, oval = 0, pen=1, brush=0, airbrush=0;
 	DrawPanel panel;
   JLabel label, label2;
 	JSlider slider;
@@ -27,6 +27,17 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     buttonItem.setActionCommand(actionName);
     buttonItem.addActionListener(listener);
 		p.add(buttonItem);
+
+  }
+
+	private void brushtype(int newpen, int neweraser, int newrect, int newoval, int newbrush, int newairbrush) {
+
+    pen = newpen;
+		eraser = neweraser;
+		rect = newrect;
+		oval = newoval;
+		brush = newbrush;
+		airbrush = newairbrush;
 
   }
 
@@ -54,7 +65,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		addButton(p, button1, "./004-edit.png", "pen", this);
 		addButton(p, button2, "./002-eraser.png", "Eraser", this);
 		addButton(p, button3, "./008-paint-brush.png", "brush", this);
-		addButton(p, button4, "./001-bucket.png", "bucket", this);
+		addButton(p, button4, "./001-bucket.png", "airbrush", this);
 		addButton(p, button5, "./003-select-1.png", "Rectangle", this);
 		addButton(p, button6, "./005-ellipse.png", "Oval", this);
 		addButton(p, button7, "./palette02.png", "Pallette", this);
@@ -140,9 +151,14 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
   }
 
 	public void stateChanged(ChangeEvent arg0) {
-		int s = slider.getValue();
-		label.setText("ブラシの大きさ：" + s);
+		float s = slider.getValue();
+		int s2 = slider.getValue();
+		label.setText("ブラシの大きさ：" + s2);
+		panel.cursorpen(s2);
+		panel.cursoreraser(s2);
 		panel.setPenWidth(s);
+		panel.setAirWidth(s2);
+		panel.setStampWidth(s2);
 	}
 
   public void mouseEntered (MouseEvent arg0) {
@@ -180,10 +196,25 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     else if (oval == 1) {
       repaint();
     }
-    else if (rect != 1 || oval != 1) {
+    else if (pen == 1) {
       panel.drawLine(lastx,lasty,newx,newy);
       lastx=newx;
   		lasty=newy;
+    }
+		else if (eraser == 1 ) {
+			pen = 0;
+      panel.EraserLine(lastx,lasty,newx,newy);
+      lastx=newx;
+  		lasty=newy;
+    }
+		else if (brush == 1) {
+			pen = 0;
+      panel.stamp(newx, newy);
+      repaint();
+    }
+		else if (airbrush == 1) {
+      panel.airbrush(newx, newy);
+      repaint();
     }
 	}
 
@@ -193,7 +224,6 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 	private void init() {
 		this.setTitle("Simple Draw");
-		/*this.setSize(300, 200);*/
     this.setBounds(100, 100, 1200, 900);
 		panel=new DrawPanel();
 		this.getContentPane().add(panel);
@@ -203,6 +233,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     panel.setPenColor(Color.black);
 		panel.createBuffer(this.getWidth()-20, this.getHeight()-20);
+		panel.setcursorpen(1);
 
     getContentPane().add(panel, BorderLayout.CENTER);
 	}
@@ -244,32 +275,34 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
       panel.setPenColor(Color.red);
     }
     else if (command == "Pallette") {
-      eraser = 0;
       JColorChooser colorchooser = new JColorChooser();
       Color color = colorchooser.showDialog(this,"choose color", Color.blue);
       panel.setPenColor(color);
     }
     else if (command == "Eraser") {
-			panel.setPenColor(Color.white);
-			panel.setPenWidth(5);
-      eraser = 1;
-      rect = 0;
-      oval = 0;
+			brushtype(0, 1, 0, 0, 0, 0);
     }
 		else if (command == "pen") {
-			panel.setPenColor(Color.black);
-			panel.setPenWidth(1);
+			//panel.setPenColor(Color.black);
+			brushtype(1, 0, 0, 0, 0, 0);
 		}
     else if (command == "Rectangle") {
-      eraser = 0;
-      rect = 1;
-      oval = 0;
+			//panel.setPenWidth(1);
+			brushtype(0, 0, 1, 0, 0, 0);
     }
     else if (command == "Oval") {
-      eraser = 0;
-      rect = 0;
-      oval = 1;
+			//panel.setPenWidth(1);
+      brushtype(0, 0, 0, 1, 0, 0);
     }
+		else if (command == "brush") {
+			brushtype(0, 0, 0, 0, 1, 0);
+		}
+		else if (command == "airbrush") {
+			brushtype(0, 0, 0, 0, 0, 1);
+		}
+		else if (command == "clear") {
+			panel.clear();
+		}
     else if (command == "width1") {
       panel.setPenWidth(1);
     }
