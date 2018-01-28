@@ -22,7 +22,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
   Graphics g;
   JFileChooser fileChooser;
 	int s2, iconSize=48;
-	Color newstate = Color.gray;
+	Color newstate = new Color(51,51, 51);
 	JButton pencil_bt;
 	JPanel p0, p1, p2;
 	JPanel pencil_bk, eraser_bk, brush_bk, airbrush_bk, rectangle_bk, oval_bk, pallete_bk, clear_bk;
@@ -57,12 +57,26 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     buttonItem.addActionListener(listener);
 		buttonItem.setContentAreaFilled(false);
     buttonItem.setBorderPainted(false);
+		back.setOpaque(true);
+		back.setBackground(new Color(102,102,102));
 		back.add(buttonItem);
 		p.add(back);
   }
 
-	private void backstate(JPanel p, JButton buttonItem) {
-		p.setBackground(newstate);
+	private void backstate(JPanel button_bk, Color newcolor) {
+		button_bk.setOpaque(true);
+		button_bk.setBackground(newstate);
+	}
+
+	private void backstate_reset() {
+		pencil_bk.setBackground(new Color(102,102,102));
+		eraser_bk.setBackground(new Color(102,102,102));
+		brush_bk.setBackground(new Color(102,102,102));
+		airbrush_bk.setBackground(new Color(102,102,102));
+		rectangle_bk.setBackground(new Color(102,102,102));
+		oval_bk.setBackground(new Color(102,102,102));
+		pallete_bk.setBackground(new Color(102,102,102));
+		clear_bk.setBackground(new Color(102,102,102));
 	}
 
 	public void initButton() {
@@ -95,29 +109,14 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		JButton pallete_bt = new JButton();
 		JButton clear_bt = new JButton();
 
-		addButton(pencil_bk, p1, pencil_bt, "edit.png", "pen", this);
-		addButton(eraser_bk, p1, eraser_bt, "eraser2.png", "Eraser", this);
-		addButton(brush_bk, p1, brush_bt, "eraser2.png", "brush", this);
-		addButton(airbrush_bk, p1, airbrush_bt, "eraser2.png", "airbrush", this);
-		addButton(rectangle_bk, p1, rectangle_bt, "eraser2.png", "Rectangle", this);
-		addButton(oval_bk, p1, oval_bt, "eraser2.png", "Oval", this);
-		addButton(pallete_bk, p1, pallete_bt, "eraser2.png", "Pallette", this);
-		addButton(clear_bk, p1, clear_bt, "eraser2.png", "clear", this);
-
-		// Foreground color chooser
-		ImageIcon icon = getIcon(Color.gray);
-		JButton colorButton = new JButton(icon);
-		colorButton.setToolTipText("foreground color");
-		colorButton.addActionListener(this);
-
-		// Background color chooser
-		ImageIcon backIcon = getIcon(Color.gray);
-		JButton backColorButton = new JButton(backIcon);
-		backColorButton.setToolTipText("background color");
-		backColorButton.addActionListener(this);
-
-		p1.add(colorButton);
-		p1.add(backColorButton);
+		addButton(pencil_bk, p1, pencil_bt, "icon/pencil-icon.png", "pen", this);
+		addButton(eraser_bk, p1, eraser_bt, "icon/eraser-icon.png", "Eraser", this);
+		addButton(brush_bk, p1, brush_bt, "icon/star-icon.png", "brush", this);
+		addButton(airbrush_bk, p1, airbrush_bt, "icon/airbrush-icon.png", "airbrush", this);
+		addButton(rectangle_bk, p1, rectangle_bt, "icon/rectangle-icon.png", "Rectangle", this);
+		addButton(oval_bk, p1, oval_bt, "icon/oval-icon.png", "Oval", this);
+		addButton(pallete_bk, p1, pallete_bt, "icon/pallet-icon.png", "Pallette", this);
+		addButton(clear_bk, p1, clear_bt, "icon/clear-icon.png", "clear", this);
 
 		GridLayout layout = new GridLayout(8, 1);
     layout.setHgap(10);
@@ -295,6 +294,10 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 		p0.add(p1, BorderLayout.WEST);
 		p0.add(p2, BorderLayout.EAST);
+
+		p0.setBackground(new Color(102,102,102));
+		p1.setBackground(new Color(102,102,102));
+		p2.setBackground(new Color(102,102,102));
 	}
 
   public void actionPerformed (ActionEvent arg0) {
@@ -334,33 +337,46 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
       panel.setPenColor(Color.red);
     }
     else if (command == "Pallette") {
+			backstate_reset();
+			backstate(pallete_bk, Color.gray);
       JColorChooser colorchooser = new JColorChooser();
       Color color = colorchooser.showDialog(this,"choose color", Color.blue);
       panel.setPenColor(color);
     }
     else if (command == "Eraser") {
 			brushtype(0, 1, 0, 0, 0, 0);
+			backstate_reset();
+			backstate(eraser_bk, Color.gray);
     }
 		else if (command == "pen") {
 			brushtype(1, 0, 0, 0, 0, 0);
-			listenstate(Color.black);
-			pencil_bk.setOpaque(true);
-			pencil_bk.setBackground(Color.gray);
+			backstate_reset();
+			backstate(pencil_bk, Color.gray);
 		}
     else if (command == "Rectangle") {
 			//panel.setPenWidth(1);
 			brushtype(0, 0, 1, 0, 0, 0);
+			backstate_reset();
+			backstate(rectangle_bk, Color.gray);
     }
     else if (command == "Oval") {
       brushtype(0, 0, 0, 1, 0, 0);
+			backstate_reset();
+			backstate(oval_bk, Color.gray);
     }
 		else if (command == "brush") {
 			brushtype(0, 0, 0, 0, 1, 0);
+			backstate_reset();
+			backstate(brush_bk, Color.gray);
 		}
 		else if (command == "airbrush") {
 			brushtype(0, 0, 0, 0, 0, 1);
+			backstate_reset();
+			backstate(airbrush_bk, Color.gray);
 		}
 		else if (command == "clear") {
+			backstate_reset();
+			backstate(clear_bk, Color.gray);
 			panel.clear();
 		}
     else if (command == "width1") {
