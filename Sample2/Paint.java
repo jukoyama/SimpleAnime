@@ -209,7 +209,7 @@ class Paint extends JFrame implements ActionListener, ChangeListener {
 		sizeLabel.setText(str);
 	}
 
-	private void newAction(ActionEvent e) {
+	private void (ActionEvent e) {
 		System.out.println("Action: New");
 
 		NewImageDialog dialog = new NewImageDialog(this,true,lastImgWidth,lastImgHeight);

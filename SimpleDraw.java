@@ -83,7 +83,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 		slider = new JSlider(1,100);
 		slider.setValue(1);
-		slider.setPaintTicks(true);
+		//slider.setPaintTicks(true);
 		slider.addChangeListener(this);
 
 		p0 = new JPanel();
@@ -127,7 +127,8 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 		label = new JLabel();
 		label.setHorizontalAlignment(JLabel.CENTER);
-		label.setText("ブラシの大きさ：" + slider.getValue());
+		label.setText("ブラシサイズ：" + slider.getValue());
+		label.setForeground(Color.white);
 
 		//p2の中身の配置
 		p2.add(slider, BorderLayout.NORTH);
@@ -143,9 +144,11 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 	}
 
-  private void addMenuItem(JMenu targetMenu, String itemName, String actionName, ActionListener listener) {
+  private void addMenuItem(JMenu targetMenu, String itemName, String actionName, ActionListener listener, int key) {
 
     JMenuItem menuItem = new JMenuItem(itemName);
+		menuItem.setMnemonic(key);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(key, InputEvent.META_DOWN_MASK));
     menuItem.setActionCommand(actionName);
     menuItem.addActionListener(listener);
     targetMenu.add(menuItem);
@@ -154,45 +157,65 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
   private void initMenu() {
 
-    JMenuBar menubar = new JMenuBar();
+		JMenuBar menubar = new JMenuBar() {
+	     @Override protected void paintComponent(Graphics g) {
+		      super.paintComponent(g);
+		      Graphics2D g2 = (Graphics2D) g.create();
+		      g2.setColor(new Color(102,102,102));
+		      g2.fillRect(0, 0, getWidth(), getHeight());
+		      g2.dispose();
+	     }
+	  };
 
-    JMenu menuFile = new JMenu("File");
-    this.addMenuItem(menuFile,"New","New",this);
-    this.addMenuItem(menuFile,"Open...","Open",this);
-    this.addMenuItem(menuFile,"Save...","Save",this);
+		menubar.setForeground(Color.white);
+
+		JMenu menuFile = new JMenu("ファイル");
+    this.addMenuItem(menuFile,"新規作成","New",this, KeyEvent.VK_N);
+    this.addMenuItem(menuFile,"開く","Open",this, KeyEvent.VK_O);
+    this.addMenuItem(menuFile,"保存","Save",this, KeyEvent.VK_S);
+		menuFile.setOpaque(false);
     menubar.add(menuFile);
 
-    JMenu menuPen = new JMenu("Pen");
+    JMenu menuPen = new JMenu("ブラシ");
+		menuPen.setOpaque(false);
     menubar.add(menuPen);
 
-    JMenu menuColor = new JMenu("Color");
-    this.addMenuItem(menuColor,"Black","Black",this);
-    this.addMenuItem(menuColor,"Blue","Blue",this);
-    this.addMenuItem(menuColor,"Yellow","Yellow",this);
-    this.addMenuItem(menuColor,"Green","Green",this);
-    this.addMenuItem(menuColor,"Red","Red",this);
-    this.addMenuItem(menuColor,"Eraser","Eraser",this);
-    this.addMenuItem(menuColor,"Rectangle","Rectangle",this);
-    this.addMenuItem(menuColor,"Oval","Oval",this);
-    this.addMenuItem(menuColor,"Choose color","Choose color",this);
+    JMenu menuColor = new JMenu("色");
+    this.addMenuItem(menuColor,"黒","Black",this, KeyEvent.VK_1);
+    this.addMenuItem(menuColor,"青","Blue",this, KeyEvent.VK_2);
+    this.addMenuItem(menuColor,"黄色","Yellow",this, KeyEvent.VK_3);
+    this.addMenuItem(menuColor,"緑","Green",this, KeyEvent.VK_4);
+    this.addMenuItem(menuColor,"赤","Red",this, KeyEvent.VK_5);
     menuPen.add(menuColor);
-
-    JMenu menuWidth = new JMenu("Width");
-    this.addMenuItem(menuWidth,"width1","width1",this);
-    this.addMenuItem(menuWidth,"width5","width5",this);
-    this.addMenuItem(menuWidth,"width10","width10",this);
-    this.addMenuItem(menuWidth,"width20","width20",this);
-    menuPen.add(menuWidth);
 
     this.setJMenuBar(menubar);
 
     label2 = new JLabel("");
     fileChooser = new JFileChooser();
-    JPanel panel = new JPanel();
-    panel.add(label2);
+    JPanel Menupanel = new JPanel();
+    Menupanel.add(label2);
     Container container = getContentPane();
-    container.add(panel);
+    container.add(Menupanel);
   }
+
+	private void newAction(ActionEvent arg0) {
+
+		NewImage dialog = new NewImage(this,true,100, 200);
+		Dimension d = dialog.getDimension();
+
+		if (d != null) {
+			panel.createBuffer(d.width,d.height);
+			/*updateSizeLabel();
+
+			lastUsedFile = null;
+			setTitle(defTitle);
+			setImageSaved();
+
+			// update lastImgWidth, lastImgHeight
+			lastImgWidth = d.width;
+			lastImgHeight = d.height;*/
+		}
+	}
 
   public void mouseClicked (MouseEvent arg0) {
   }
@@ -200,7 +223,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 	public void stateChanged(ChangeEvent arg0) {
 		float s = slider.getValue();
 		s2 = slider.getValue();
-		label.setText("ブラシの大きさ：" + s2);
+		label.setText("ブラシサイズ：" + s2);
 		panel.cursoreraser(s2);
 		panel.cursorpen(s2);
 		panel.setCursorSize(s2);
@@ -280,13 +303,14 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		this.setTitle("Simple Draw");
     this.setBounds(100, 100, 1200, 900);
 		panel=new DrawPanel();
+		panel.setBackground(new Color(51,51, 51));
 		this.getContentPane().add(panel);
     panel.addMouseListener(this);
 		panel.addMouseMotionListener(this);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     panel.setPenColor(Color.black);
-		panel.createBuffer(this.getWidth()-20, this.getHeight()-20);
+		//panel.createBuffer(this.getWidth()-20, this.getHeight()-20);
 		panel.cursorpen(1);
 
     getContentPane().add(panel, BorderLayout.CENTER);
@@ -303,6 +327,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
   public void actionPerformed (ActionEvent arg0) {
     String command = arg0.getActionCommand();
     if (command == "New") {
+			newAction(arg0);
     }
     else if (command == "Open") {
       int returnVal = fileChooser.showOpenDialog(this);

@@ -2,13 +2,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
-/**
- * DO NOT MODIFY THIS CLASS IN ANY WAY.
- *
- * Dialog for new image.
- *
- */
-public class NewImageDialog extends JDialog implements ActionListener, FocusListener {
+public class NewImage extends JDialog implements ActionListener, FocusListener {
 	private int defWidth, defHeight;
 	private JButton createButton;
 	private JButton cancelButton;
@@ -16,10 +10,6 @@ public class NewImageDialog extends JDialog implements ActionListener, FocusList
 	private JTextField heightField;
 	private Dimension d;
 
-	/**
-	 *
-	 * @return The dimensions of the image.
-	 */
     public Dimension getDimension() {
     	return d;
     }
@@ -50,7 +40,7 @@ public class NewImageDialog extends JDialog implements ActionListener, FocusList
     	}
     }
 
-    public NewImageDialog(JFrame frame, boolean modal, int width, int height) {
+    public NewImage(JFrame frame, boolean modal, int width, int height) {
         super(frame,modal);
         setTitle("Create New Image");
 

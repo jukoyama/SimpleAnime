@@ -69,6 +69,26 @@ public class DrawPanel extends JPanel {
 		bufferGraphics.clearRect(0, 0, width, height); //バッファクリア
 	}
 
+	/*private void NewFile(JFrame thisframe) {
+
+		NewImage dialog = new NewImage(thisframe,true, 100, 200);
+		Dimension d = dialog.getDimension();
+
+		if (d != null) {
+			createBuffer(d.width, d.height);
+			canvas.newBlankImage(d.width,d.height,defImgBckColor);
+			updateSizeLabel();
+
+			lastUsedFile = null;
+			setTitle(defTitle);
+			setImageSaved();
+
+			// update lastImgWidth, lastImgHeight
+			lastImgWidth = d.width;
+			lastImgHeight = d.height;
+		}
+	}*/
+
 	public void openFile(File file2open) {
 		BufferedImage pictureImage;
 		try {
@@ -225,9 +245,9 @@ public class DrawPanel extends JPanel {
 	}
 
 	public void drawLine(int x1, int y1, int x2, int y2){
-		if(null == bufferGraphics) {
+		/*if(null == bufferGraphics) {
 			this.createBuffer(this.getWidth(), this.getHeight()); //バッファがまだ作ってなければ作る
-		}
+		}*/
 		this.cursorpen(currentcursorsize);
 		bufferGraphics.setColor(currentColor);
 		bufferGraphics.setStroke(new BasicStroke(currentWidth ,BasicStroke.CAP_ROUND ,BasicStroke.JOIN_MITER));
