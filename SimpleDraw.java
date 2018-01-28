@@ -19,6 +19,18 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 	JSlider slider;
   Graphics g;
   JFileChooser fileChooser;
+	int s2, iconSize=48;
+
+	private void brushtype(int newpen, int neweraser, int newrect, int newoval, int newbrush, int newairbrush) {
+
+		pen = newpen;
+		eraser = neweraser;
+		rect = newrect;
+		oval = newoval;
+		brush = newbrush;
+		airbrush = newairbrush;
+
+	}
 
 	private void addButton(JPanel p, JButton buttonItem, String iconitem, String actionName, ActionListener listener) {
 
@@ -26,20 +38,45 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		buttonItem = new JButton(ButtonIcon);
     buttonItem.setActionCommand(actionName);
     buttonItem.addActionListener(listener);
-		p.add(buttonItem);
+		buttonItem.setContentAreaFilled(false);
+    buttonItem.setBorderPainted(false);
 
+		/*ImageIcon pressed_icon = new ImageIcon(pressediconitem);
+		buttonItem.setPressedIcon(pressed_icon);
+		p.add(buttonItem);*/
+
+		/*// Foreground color chooser
+		ImageIcon icon = getIcon(p.getColor(),iconSize);
+		colorButton = new JButton(icon);
+		// colorButton = new JButton("F. Color");
+		colorButton.setToolTipText("foreground color");
+		colorButton.addActionListener(this);
+
+		// Background color chooser
+		ImageIcon backIcon = getIcon(p.getBackColor(),iconSize);
+		backColorButton = new JButton(backIcon);
+		// backColorButton = new JButton("B. Color");
+		backColorButton.setToolTipText("background color");
+		backColorButton.addActionListener(this);*/
   }
 
-	private void brushtype(int newpen, int neweraser, int newrect, int newoval, int newbrush, int newairbrush) {
+	/*public void updateColor() {
+		ImageIcon icon = getIcon(canvas.getColor(),iconSize);
+		colorButton.setIcon(icon);
+	}
 
-    pen = newpen;
-		eraser = neweraser;
-		rect = newrect;
-		oval = newoval;
-		brush = newbrush;
-		airbrush = newairbrush;
+	public void updateBackColor() {
+		ImageIcon icon = getIcon(canvas.getBackColor(),iconSize);
+		backColorButton.setIcon(icon);
+	}*/
 
-  }
+	private static ImageIcon getIcon(Color c, int size) {
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D) img.getGraphics();
+		g2d.setColor(c);
+		g2d.fillRect(0, 0, size, size);
+		return new ImageIcon(img);
+	}
 
 	public void initButton() {
 
@@ -50,7 +87,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 		JPanel p0 = new JPanel();
 
-		JPanel p = new JPanel();
+		JPanel p1 = new JPanel();
 		JPanel p2 = new JPanel();
 
 		JButton button1 = new JButton();
@@ -62,33 +99,35 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		JButton button7 = new JButton();
 		JButton button8 = new JButton();
 
-		addButton(p, button1, "./004-edit.png", "pen", this);
-		addButton(p, button2, "./002-eraser.png", "Eraser", this);
-		addButton(p, button3, "./008-paint-brush.png", "brush", this);
-		addButton(p, button4, "./001-bucket.png", "airbrush", this);
-		addButton(p, button5, "./003-select-1.png", "Rectangle", this);
-		addButton(p, button6, "./005-ellipse.png", "Oval", this);
-		addButton(p, button7, "./palette02.png", "Pallette", this);
-		addButton(p, button8, "./file02.png", "clear", this);
+		addButton(p1, button1, "edit.png", "pen", this);
+		addButton(p1, button2, "eraser2.png", "Eraser", this);
+		addButton(p1, button3, "eraser2.png", "brush", this);
+		addButton(p1, button4, "eraser2.png", "airbrush", this);
+		addButton(p1, button5, "eraser2.png", "Rectangle", this);
+		addButton(p1, button6, "eraser2.png", "Oval", this);
+		addButton(p1, button7, "eraser2.png", "Pallette", this);
+		addButton(p1, button8, "eraser2.png", "clear", this);
 
-		GridLayout layout = new GridLayout(4, 2);
+		GridLayout layout = new GridLayout(8, 1);
     layout.setHgap(10);
     layout.setVgap(10);
-    p.setLayout(layout);
+    p1.setLayout(layout);
 
 		p2.setLayout(new BorderLayout(0, 0));
 
-		p0.setPreferredSize(new Dimension(200, this.getHeight()-200));
+		//p0.setPreferredSize(new Dimension(200, this.getHeight()-200));
 
 		label = new JLabel();
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setText("ブラシの大きさ：" + slider.getValue());
 
+		//p2の中身の配置
 		p2.add(slider, BorderLayout.NORTH);
     p2.add(label, BorderLayout.SOUTH);
 
-		p0.add(p, BorderLayout.NORTH);
-		p0.add(p2, BorderLayout.SOUTH);
+		//p0の中身の配置
+		p0.add(p1, BorderLayout.WEST);
+		p0.add(p2, BorderLayout.EAST);
 
     Container container = getContentPane();
     container.add(p0, BorderLayout.WEST);
@@ -152,10 +191,11 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 	public void stateChanged(ChangeEvent arg0) {
 		float s = slider.getValue();
-		int s2 = slider.getValue();
+		s2 = slider.getValue();
 		label.setText("ブラシの大きさ：" + s2);
-		panel.cursorpen(s2);
 		panel.cursoreraser(s2);
+		panel.cursorpen(s2);
+		panel.setCursorSize(s2);
 		panel.setPenWidth(s);
 		panel.setAirWidth(s2);
 		panel.setStampWidth(s2);
@@ -164,6 +204,12 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
   public void mouseEntered (MouseEvent arg0) {
     lastx = arg0.getX();
     lasty = arg0.getY();
+		if(eraser == 1) {
+			panel.cursoreraser(s2);
+		}
+		else {
+			panel.cursorpen(s2);
+		}
   }
 
   public void mouseExited (MouseEvent arg0) {
@@ -233,7 +279,7 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     panel.setPenColor(Color.black);
 		panel.createBuffer(this.getWidth()-20, this.getHeight()-20);
-		panel.setcursorpen(1);
+		panel.cursorpen(1);
 
     getContentPane().add(panel, BorderLayout.CENTER);
 	}
@@ -283,15 +329,14 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 			brushtype(0, 1, 0, 0, 0, 0);
     }
 		else if (command == "pen") {
-			//panel.setPenColor(Color.black);
 			brushtype(1, 0, 0, 0, 0, 0);
+			//panel.cursorpen(s2);
 		}
     else if (command == "Rectangle") {
 			//panel.setPenWidth(1);
 			brushtype(0, 0, 1, 0, 0, 0);
     }
     else if (command == "Oval") {
-			//panel.setPenWidth(1);
       brushtype(0, 0, 0, 1, 0, 0);
     }
 		else if (command == "brush") {

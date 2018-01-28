@@ -22,7 +22,7 @@ public class DrawPanel extends JPanel {
 	Float currentWidth = 1.0f;
 	int airWidth = 30;
 	int currentSize = 1;
-	int cursorsize = 1;
+	int currentcursorsize = 1;
 	BufferedImage bufferImage = null;
 	Graphics2D bufferGraphics = null;
 	Dimension   size;
@@ -30,9 +30,9 @@ public class DrawPanel extends JPanel {
 	int cursorheight;
 	//BufferedImage image;
 
-	public void cursorpen(int cursorSize) {
+	public void cursorpen(int cursorsize) {
 
-		Image image = cursorimage("edit4.png")
+		Image image = new ImageIcon("edit4.png").getImage();
 		int cursorwidth = image.getWidth(this);
 		int cursorheight = image.getHeight(this);
 
@@ -47,7 +47,7 @@ public class DrawPanel extends JPanel {
 
 	public void cursoreraser(int cursorsize) {
 
-		Image image = cursorimage("edit4.png")
+		Image image = new ImageIcon("eraser.png").getImage();
 		int cursorwidth = image.getWidth(this);
 		int cursorheight = image.getHeight(this);
 
@@ -144,6 +144,10 @@ public class DrawPanel extends JPanel {
 		currentSize = newWidth;
 	}
 
+	public void setCursorSize(int newSize) {
+		currentcursorsize = newSize;
+	}
+
 	public void clear() {
 		if(null == bufferGraphics) {
 			this.createBuffer(this.getWidth(), this.getHeight()); //バッファがまだ作ってなければ作る
@@ -224,6 +228,7 @@ public class DrawPanel extends JPanel {
 		if(null == bufferGraphics) {
 			this.createBuffer(this.getWidth(), this.getHeight()); //バッファがまだ作ってなければ作る
 		}
+		this.cursorpen(currentcursorsize);
 		bufferGraphics.setColor(currentColor);
 		bufferGraphics.setStroke(new BasicStroke(currentWidth ,BasicStroke.CAP_ROUND ,BasicStroke.JOIN_MITER));
 		bufferGraphics.drawLine(x1, y1, x2, y2);
@@ -234,6 +239,7 @@ public class DrawPanel extends JPanel {
 		if(null == bufferGraphics) {
 			this.createBuffer(this.getWidth(), this.getHeight()); //バッファがまだ作ってなければ作る
 		}
+		this.cursoreraser(currentcursorsize);
 		bufferGraphics.setColor(Color.white);
 		bufferGraphics.setStroke(new BasicStroke(currentWidth ,BasicStroke.CAP_ROUND ,BasicStroke.JOIN_MITER));
 		bufferGraphics.drawLine(x1, y1, x2, y2);
