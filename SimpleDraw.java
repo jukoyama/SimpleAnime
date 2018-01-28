@@ -10,6 +10,8 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.JFrame;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 
 public class SimpleDraw extends JFrame implements ActionListener, MouseListener, MouseMotionListener, ChangeListener {
 
@@ -20,6 +22,10 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
   Graphics g;
   JFileChooser fileChooser;
 	int s2, iconSize=48;
+	Color newstate = Color.gray;
+	JButton pencil_bt;
+	JPanel p0, p1, p2;
+	JPanel pencil_bk, eraser_bk, brush_bk, airbrush_bk, rectangle_bk, oval_bk, pallete_bk, clear_bk;
 
 	private void brushtype(int newpen, int neweraser, int newrect, int newoval, int newbrush, int newairbrush) {
 
@@ -32,7 +38,18 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 
 	}
 
-	private void addButton(JPanel p, JButton buttonItem, String iconitem, String actionName, ActionListener listener) {
+	private static ImageIcon getIcon(Color c) {
+
+		BufferedImage bi_bt = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d_bt = (Graphics2D)bi_bt.getGraphics();
+		g2d_bt.setColor(c);
+		g2d_bt.fillRect(0, 0, 20, 20);
+		return new ImageIcon(bi_bt);
+	}
+
+	private void addButton(JPanel back, JPanel p, JButton buttonItem, String iconitem, String actionName, ActionListener listener) {
+
+		Image image = new ImageIcon(iconitem).getImage();
 
     ImageIcon ButtonIcon = new ImageIcon(iconitem);
 		buttonItem = new JButton(ButtonIcon);
@@ -40,42 +57,12 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     buttonItem.addActionListener(listener);
 		buttonItem.setContentAreaFilled(false);
     buttonItem.setBorderPainted(false);
-
-		/*ImageIcon pressed_icon = new ImageIcon(pressediconitem);
-		buttonItem.setPressedIcon(pressed_icon);
-		p.add(buttonItem);*/
-
-		/*// Foreground color chooser
-		ImageIcon icon = getIcon(p.getColor(),iconSize);
-		colorButton = new JButton(icon);
-		// colorButton = new JButton("F. Color");
-		colorButton.setToolTipText("foreground color");
-		colorButton.addActionListener(this);
-
-		// Background color chooser
-		ImageIcon backIcon = getIcon(p.getBackColor(),iconSize);
-		backColorButton = new JButton(backIcon);
-		// backColorButton = new JButton("B. Color");
-		backColorButton.setToolTipText("background color");
-		backColorButton.addActionListener(this);*/
+		back.add(buttonItem);
+		p.add(back);
   }
 
-	/*public void updateColor() {
-		ImageIcon icon = getIcon(canvas.getColor(),iconSize);
-		colorButton.setIcon(icon);
-	}
-
-	public void updateBackColor() {
-		ImageIcon icon = getIcon(canvas.getBackColor(),iconSize);
-		backColorButton.setIcon(icon);
-	}*/
-
-	private static ImageIcon getIcon(Color c, int size) {
-		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = (Graphics2D) img.getGraphics();
-		g2d.setColor(c);
-		g2d.fillRect(0, 0, size, size);
-		return new ImageIcon(img);
+	private void backstate(JPanel p, JButton buttonItem) {
+		p.setBackground(newstate);
 	}
 
 	public void initButton() {
@@ -85,28 +72,52 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		slider.setPaintTicks(true);
 		slider.addChangeListener(this);
 
-		JPanel p0 = new JPanel();
+		p0 = new JPanel();
 
-		JPanel p1 = new JPanel();
-		JPanel p2 = new JPanel();
+		p1 = new JPanel();
+		p2 = new JPanel();
 
-		JButton button1 = new JButton();
-		JButton button2 = new JButton();
-		JButton button3 = new JButton();
-		JButton button4 = new JButton();
-		JButton button5 = new JButton();
-		JButton button6 = new JButton();
-		JButton button7 = new JButton();
-		JButton button8 = new JButton();
+		pencil_bk = new JPanel();
+	 	eraser_bk = new JPanel();
+		brush_bk = new JPanel();
+		airbrush_bk = new JPanel();
+		rectangle_bk = new JPanel();
+		oval_bk = new JPanel();
+		pallete_bk = new JPanel();
+		clear_bk = new JPanel();
 
-		addButton(p1, button1, "edit.png", "pen", this);
-		addButton(p1, button2, "eraser2.png", "Eraser", this);
-		addButton(p1, button3, "eraser2.png", "brush", this);
-		addButton(p1, button4, "eraser2.png", "airbrush", this);
-		addButton(p1, button5, "eraser2.png", "Rectangle", this);
-		addButton(p1, button6, "eraser2.png", "Oval", this);
-		addButton(p1, button7, "eraser2.png", "Pallette", this);
-		addButton(p1, button8, "eraser2.png", "clear", this);
+		pencil_bt = new JButton();
+		JButton eraser_bt = new JButton();
+		JButton brush_bt = new JButton();
+		JButton airbrush_bt = new JButton();
+		JButton rectangle_bt = new JButton();
+		JButton oval_bt = new JButton();
+		JButton pallete_bt = new JButton();
+		JButton clear_bt = new JButton();
+
+		addButton(pencil_bk, p1, pencil_bt, "edit.png", "pen", this);
+		addButton(eraser_bk, p1, eraser_bt, "eraser2.png", "Eraser", this);
+		addButton(brush_bk, p1, brush_bt, "eraser2.png", "brush", this);
+		addButton(airbrush_bk, p1, airbrush_bt, "eraser2.png", "airbrush", this);
+		addButton(rectangle_bk, p1, rectangle_bt, "eraser2.png", "Rectangle", this);
+		addButton(oval_bk, p1, oval_bt, "eraser2.png", "Oval", this);
+		addButton(pallete_bk, p1, pallete_bt, "eraser2.png", "Pallette", this);
+		addButton(clear_bk, p1, clear_bt, "eraser2.png", "clear", this);
+
+		// Foreground color chooser
+		ImageIcon icon = getIcon(Color.gray);
+		JButton colorButton = new JButton(icon);
+		colorButton.setToolTipText("foreground color");
+		colorButton.addActionListener(this);
+
+		// Background color chooser
+		ImageIcon backIcon = getIcon(Color.gray);
+		JButton backColorButton = new JButton(backIcon);
+		backColorButton.setToolTipText("background color");
+		backColorButton.addActionListener(this);
+
+		p1.add(colorButton);
+		p1.add(backColorButton);
 
 		GridLayout layout = new GridLayout(8, 1);
     layout.setHgap(10);
@@ -114,8 +125,6 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     p1.setLayout(layout);
 
 		p2.setLayout(new BorderLayout(0, 0));
-
-		//p0.setPreferredSize(new Dimension(200, this.getHeight()-200));
 
 		label = new JLabel();
 		label.setHorizontalAlignment(JLabel.CENTER);
@@ -126,8 +135,8 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     p2.add(label, BorderLayout.SOUTH);
 
 		//p0の中身の配置
-		p0.add(p1, BorderLayout.WEST);
-		p0.add(p2, BorderLayout.EAST);
+		/*p0.add(p1, BorderLayout.WEST);
+		p0.add(p2, BorderLayout.EAST);*/
 
     Container container = getContentPane();
     container.add(p0, BorderLayout.WEST);
@@ -282,6 +291,10 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
 		panel.cursorpen(1);
 
     getContentPane().add(panel, BorderLayout.CENTER);
+		getContentPane().add(p0, BorderLayout.WEST);
+
+		p0.add(p1, BorderLayout.WEST);
+		p0.add(p2, BorderLayout.EAST);
 	}
 
   public void actionPerformed (ActionEvent arg0) {
@@ -330,7 +343,9 @@ public class SimpleDraw extends JFrame implements ActionListener, MouseListener,
     }
 		else if (command == "pen") {
 			brushtype(1, 0, 0, 0, 0, 0);
-			//panel.cursorpen(s2);
+			listenstate(Color.black);
+			pencil_bk.setOpaque(true);
+			pencil_bk.setBackground(Color.gray);
 		}
     else if (command == "Rectangle") {
 			//panel.setPenWidth(1);
